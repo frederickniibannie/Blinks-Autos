@@ -1,126 +1,86 @@
-document.addEventListener("DOMContentLoaded", () => {
-    const cart = [];
-    const cartCountEl = document.getElementById("cart-count");
-    const cartItemsEl = document.getElementById("cart-items");
-    const cartTotalEl = document.getElementById("cart-total");
-    const cartBtn = document.getElementById("cart-btn");
-    const cartModal = document.getElementById("cart-modal");
-    const closeCartBtn = document.getElementById("close-cart-btn");
-    const checkoutBtn = document.getElementById("checkout-btn");
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Blinks Auto | Buy Cars in Ghana</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    // Smooth scrolling for nav links
-    document.querySelectorAll("nav a").forEach(link => {
-        link.addEventListener("click", e => {
-            e.preventDefault();
-            const target = document.querySelector(link.getAttribute("href"));
-            if (target) target.scrollIntoView({ behavior: "smooth" });
-        });
-    });
+    <!-- Font Awesome (WhatsApp icon) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-    // Button click animation
-    document.querySelectorAll("button").forEach(btn => {
-        btn.addEventListener("click", () => {
-            btn.style.transform = "scale(0.95)";
-            setTimeout(() => btn.style.transform = "scale(1)", 150);
-        });
-    });
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
-    // Quantity selectors on food cards
-    document.querySelectorAll(".food-card").forEach(card => {
-        const minusBtn = card.querySelector(".minus");
-        const plusBtn = card.querySelector(".plus");
-        const qtyEl = card.querySelector(".qty");
+<!-- ================= HEADER ================= -->
+<header>
+    <div class="logo">🚗 Blinks Auto</div>
+    <nav>
+        <a href="#">Home</a>
+        <a href="#cars">Cars</a>
+        <a href="#contact">Contact</a>
+    </nav>
+</header>
 
-        minusBtn.addEventListener("click", () => {
-            let qty = parseInt(qtyEl.textContent);
-            if (qty > 1) qty--;
-            qtyEl.textContent = qty;
-        });
+<!-- ================= HERO ================= -->
+<section class="hero">
+    <div class="hero-content">
+        <h1>Buy Quality Cars in Ghana</h1>
+        <p>Trusted Dealer • Fair Prices • Fast WhatsApp Support</p>
+        <a href="#cars" class="hero-btn">Browse Available Cars</a>
+    </div>
+</section>
 
-        plusBtn.addEventListener("click", () => {
-            let qty = parseInt(qtyEl.textContent);
-            qty++;
-            qtyEl.textContent = qty;
-        });
-    });
+<!-- ================= FILTER SECTION ================= -->
+<section class="filter-section">
+    <h2>Find Your Car</h2>
 
-    // Add to Cart button
-    document.querySelectorAll(".add-to-cart-btn").forEach(btn => {
-        btn.addEventListener("click", e => {
-            e.stopPropagation();
-            const card = btn.closest(".food-card");
-            const name = card.querySelector("h3").textContent;
-            const priceText = card.querySelector("p").textContent;
-            const price = parseFloat(priceText.replace("GHS", "").trim());
-            const qty = parseInt(card.querySelector(".qty").textContent);
+    <div class="filters">
+        <!-- Price -->
+        <input type="text" id="minPrice" placeholder="Min Price (GHS)">
+        <input type="text" id="maxPrice" placeholder="Max Price (GHS)">
 
-            // Check if item already in cart
-            const existing = cart.find(item => item.name === name);
-            if (existing) {
-                existing.quantity += qty;
-            } else {
-                cart.push({ name, price, quantity: qty });
-            }
+        <!-- Brand -->
+        <input type="text" id="brandFilter" placeholder="Brand (e.g Toyota, BMW)">
 
-            updateCart();
-        });
-    });
+        <!-- Condition -->
+        <select id="conditionFilter">
+            <option value="">Any Condition</option>
+            <option value="Used">Used</option>
+            <option value="Brand New">Brand New</option>
+        </select>
 
-    // Update cart display
-    function updateCart() {
-        cartCountEl.textContent = cart.reduce((sum, item) => sum + item.quantity, 0);
-        cartItemsEl.innerHTML = "";
-        let total = 0;
+        <!-- Button -->
+        <button id="filterBtn">
+            <i class="fas fa-filter"></i> Apply Filter
+        </button>
+    </div>
+</section>
 
-        cart.forEach(item => {
-            total += item.price * item.quantity;
-            const li = document.createElement("li");
-            li.textContent = `${item.name} x ${item.quantity} - GHS ${item.price * item.quantity}`;
+<!-- ================= INVENTORY ================= -->
+<section class="inventory" id="cars">
+    <div class="car-grid" id="carGrid">
+        <!-- Cars are injected here by script.js -->
+    </div>
+</section>
 
-            // Quantity controls inside cart modal
-            const plus = document.createElement("button");
-            plus.textContent = "+";
-            plus.addEventListener("click", () => {
-                item.quantity++;
-                updateCart();
-            });
+<!-- ================= FLOATING WHATSAPP ================= -->
+<a href="https://wa.me/233243495780"
+   class="whatsapp-float"
+   target="_blank"
+   aria-label="Chat on WhatsApp">
+    <i class="fab fa-whatsapp"></i>
+</a>
 
-            const minus = document.createElement("button");
-            minus.textContent = "-";
-            minus.addEventListener("click", () => {
-                item.quantity--;
-                if (item.quantity <= 0) cart.splice(cart.indexOf(item), 1);
-                updateCart();
-            });
+<!-- ================= FOOTER ================= -->
+<footer id="contact">
+    <p>© 2025 Blinks Auto — Trusted Car Dealer in Ghana</p>
+    <p>Call / WhatsApp: +233 24 349 5780</p>
+</footer>
 
-            li.appendChild(minus);
-            li.appendChild(plus);
-            cartItemsEl.appendChild(li);
-        });
+<!-- ================= JAVASCRIPT ================= -->
+<script src="script.js"></script>
 
-        cartTotalEl.textContent = total.toFixed(2);
-    }
-
-    // Show cart modal
-    cartBtn.addEventListener("click", () => {
-        cartModal.style.display = "flex";
-    });
-
-    // Close cart modal
-    closeCartBtn.addEventListener("click", () => {
-        cartModal.style.display = "none";
-    });
-
-    // Checkout → WhatsApp
-    checkoutBtn.addEventListener("click", () => {
-        if(cart.length === 0) return alert("Cart is empty!");
-        let message = "Hello Esi’s Kitchen 👋\nI would like to order:\n";
-        cart.forEach(item => {
-            message += `${item.name} x ${item.quantity} - GHS ${item.price * item.quantity}\n`;
-        });
-        message += `Total: GHS ${cart.reduce((sum, item) => sum + item.price*item.quantity,0)}`;
-
-        const whatsappURL = "https://wa.me/233541682058?text=" + encodeURIComponent(message);
-        window.open(whatsappURL, "_blank");
-    });
-});
+</body>
+</html>
